@@ -1,0 +1,25 @@
+{
+  "name": "ds4qb-web",
+  "version": "1.0.0",
+  "description": "Extensions for v86 to emulate the DS4QB audio library",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "parkertomatoes",
+  "license": "MIT",
+  "dependencies": {
+    "chiptune3": "^0.7.12",
+    "fatfs-wasm": "^3.0.3",
+    "howler": "^2.2.4",
+    "unzipit": "^1.4.3"
+  },
+  "devDependencies": {
+    "@rollup/plugin-terser": "^0.4.4",
+    "@rollup/plugin-typescript": "^12.1.1",
+    "@types/howler": "^2.2.12",
+    "rollup": "^4.28.0",
+    "rollup-plugin-copy": "^3.5.0",
+    "tslib": "^2.8.1"
+  }
+}

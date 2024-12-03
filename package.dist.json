@@ -1,0 +1,20 @@
+{
+  "name": "ds4qb-web",
+  "version": "1.0.0",
+  "description": "Extensions for v86 to emulate the DS4QB audio library",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "parkertomatoes",
+  "license": "MIT",
+  "dependencies": {
+    "chiptune3": "^0.7.12",
+    "fatfs-wasm": "^3.0.3",
+    "howler": "^2.2.4",
+    "unzipit": "^1.4.3"
+  },
+  "devDependencies": {
+    "@types/howler": "^2.2.12"
+  }
+}
