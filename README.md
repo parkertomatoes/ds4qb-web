@@ -11,9 +11,11 @@ ds4qb-web is a browser-based server for the DS4QB2 protocol, allowing these game
 ## Try it out
 
 A live demo playing [Squealer TNT](http://piptol.qbasicnews.com/) with sound:
+
 [Link](https://parkertomatoes.github.io/ds4qb-web-demo/?game=squealer)
 
 A sample project using Vite and TypeScript:
+
 [<img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub link" width="30"/>](https://github.com/parkertomatoes/ds4qb-web-example-vite) [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/parkertomatoes/ds4qb-web-example-vite)
 
 
