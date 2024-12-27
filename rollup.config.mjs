@@ -16,15 +16,32 @@ export default [{
         format: 'umd',
         name: 'ds4qb-web',
         sourcemap: true,
-        sourcemapPathTransform: rebaseDist
+        sourcemapPathTransform: rebaseDist,
+        globals: {
+            'fatfs-wasm': 'fatfs-wasm',
+            'unzipit': 'unzipit',
+            'howler': 'howler',
+            'chiptune3': 'chiptune3'
+        }
     }, {
         file: './dist/ds4qb-web.min.mjs',
         format: 'es',
         name: 'ds4qb-web',
         sourcemap: true,
-        sourcemapPathTransform: rebaseDist
+        sourcemapPathTransform: rebaseDist,
+        globals: {
+            'fatfs-wasm': 'fatfs-wasm',
+            'unzipit': 'unzipit',
+            'howler': 'howler',
+            'chiptune3': 'chiptune3'
+        }
     }],
-    external: ['node:path', 'node:url', 'node:fs/promises'],
+    external: [
+        'fatfs-wasm', 
+        'unzipit', 
+        'howler',
+        'chiptune3'
+    ],
     plugins: [
         typescript({
             rootDir: './src'

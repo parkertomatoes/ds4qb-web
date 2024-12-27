@@ -29,19 +29,30 @@ export class FatPathMapper {
         return shortName;
     }
 
+    static #removeRelativeComponents(path: string[]) {
+        return path.reduce((acc, component) => {
+            if (component === "..") {
+                acc.pop();
+            } else if (component !== "." && component !== "") {
+                acc.push(component);
+            }
+            return acc;
+        }, [] as string[]);
+    }
+
     public toFatPath(path: string): string {
         const sanitized = path.startsWith('/') || path.startsWith('\\')
             ? path.substring(1)
             : path;
         const components = sanitized.split(/[\\/]/).map(c => c.toUpperCase()); // Split path into components
-        const mappedComponents = components.map(component => {
+        const reducedComponents = FatPathMapper.#removeRelativeComponents(components)
+        const mappedComponents = reducedComponents.map(component => {
             if (!this.#mapping[component]) {
                 const shortName = this.#generateShortName(component);
                 this.#mapping[component] = shortName;
             }
             return this.#mapping[component];
         });
-        console.log('SANITIZING:', path, mappedComponents.join('\\'))
         return mappedComponents.join('\\'); // Reassemble the path with backslashes
     }
 }

@@ -1,5 +1,6 @@
 import { Howl } from 'howler';
 import { ChiptuneJsPlayer } from 'chiptune3';
+import { DS4QBDriver, DS4QBProtocol } from './ds4qb';
 
 enum Command {
     PlayMusic = 1,
@@ -21,13 +22,6 @@ enum Command {
     PlaySFX = 56
 }
 
-export type DS4QBDriver = {
-    read: (path: string) => Uint8Array,
-    write: (path: string, content: Uint8Array) => void,
-    poll: () => number,
-    clear: () => void
-}
-
 type MusicChannel = {
     type: 'mp3',
     handle: Howl
@@ -36,7 +30,7 @@ type MusicChannel = {
     handle: typeof ChiptuneJsPlayer
 };
 
-export class DS4QB {
+export class DS4QB2 implements DS4QBProtocol {
     #driver: DS4QBDriver;
     #ds4qbDatPath: string;
     #workingDir: string;
@@ -109,7 +103,7 @@ export class DS4QB {
                     };
                     this.#musicChannels[musicChannel].handle.play();
                 } else {
-                    // MOD/IT/S3M/XM - use chiptune2.js to play
+                    // MOD/IT/S3M/XM - use chiptune to play
                     this.#musicChannels[musicChannel] = {
                         type: 'mod',
                         handle: new ChiptuneJsPlayer({ repeatCount: !!mRepeat ? -1 : 0 })
@@ -144,13 +138,17 @@ export class DS4QB {
                         path = file.substring(3)
                     else
                         path = `${this.#workingDir}/${file}`;
-                    const contents = this.#driver.read(path);
-                    const blob = new Blob([contents], { type: 'audio/wav' });
-                    URL.createObjectURL(blob);
-                    this.#soundHandles.push(new Howl({
-                        src: [URL.createObjectURL(blob)],
-                        format: ['wav']
-                    }));
+                    try {
+                        const contents = this.#driver.read(path);
+                        const blob = new Blob([contents], { type: 'audio/wav' });
+                        URL.createObjectURL(blob);
+                        this.#soundHandles.push(new Howl({
+                            src: [URL.createObjectURL(blob)],
+                            format: ['wav']
+                        }));
+                    } catch {
+                        console.error(`LoadSFX: Unable to read '${path}'`);
+                    }
                 }
 
                 break;
@@ -243,8 +241,10 @@ export class DS4QB {
 
             case Command.Exit: {
                 console.log('Exit', {});
-                for (const effect of this.#soundHandles)
+                for (const effect of this.#soundHandles) {
                     effect.stop();
+                    effect.unload();
+                }
                 for (const music of Object.values(this.#musicChannels)) 
                     music.handle.stop();
                 break;

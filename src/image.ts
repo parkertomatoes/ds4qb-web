@@ -85,6 +85,14 @@ export async function createImage(zipFile: FileReference): Promise<{ image: Uint
     for (const { name, contents } of unzippedEntries) {
         try {
             if (contents === null) {
+                for (const parentDir of getRootPaths(name)) {
+                    const dirName = parentDir.endsWith('/') ? parentDir.substring(0, parentDir.length - 1) : parentDir;
+                    if (!visited.has(dirName)) {
+                        disk.mkdir(pathMap.toFatPath(dirName));
+                        visited.add(dirName);
+                    }
+                }
+
                 const dirName = name.endsWith('/') ? name.substring(0, name.length - 1) : name;
                 if (!visited.has(dirName)) {
                     disk.mkdir(pathMap.toFatPath(dirName));
