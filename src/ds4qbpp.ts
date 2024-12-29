@@ -94,15 +94,12 @@ export class DS4QBPP implements DS4QBProtocol {
     }
 
     start() {
-        console.log('STARTING SERVICE');
         this.#interval = setInterval(() => {
             const signal = this.#driver.poll();
             if (signal !== 0) {
-                console.log(`SIGNAL: ${signal}`)
                 try {
                     const command = this.#driver.read(`${this.#workingDir}\\DS4QB.QBW`);
                     this.#invoke(command).then(output => {
-                        console.log(`PARAMS: ${command}`)
                         if (output)
                             this.#driver.write(`${this.#workingDir}\\DS4QB.VCW`, output);
                         this.#driver.clear();
@@ -116,7 +113,6 @@ export class DS4QBPP implements DS4QBProtocol {
     }
 
     stop() {
-        console.log('ENDING SERVICE');
         clearInterval(this.#interval);
     }
 

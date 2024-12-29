@@ -1,6 +1,6 @@
 {
   "name": "ds4qb-web",
-  "version": "0.0.4",
+  "version": "0.1.1",
   "description": "Extensions for v86 to emulate the DS4QB audio library",
   "main": "ds4qb-web.ts",
   "scripts": {
