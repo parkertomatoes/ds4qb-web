@@ -1,5 +1,5 @@
 # ds4qb-web
-[![Release](https://badgen.net/github/release/parkertomatoes/ds4qb-web)](https://github.com/parkertomatoes/ds4qb-web/releases) [![NPM Version](https://badgen.net/npm/v/ds4qb-web)](https://www.npmjs.com/package/ds4qb-web) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Release](https://badgen.net/github/release/parkertomatoes/ds4qb-web/2.0.0)](https://github.com/parkertomatoes/ds4qb-web/releases) [![NPM Version](https://badgen.net/npm/v/ds4qb-web)](https://www.npmjs.com/package/ds4qb-web) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 Implementation of the DS4QB, DS4QB2, and DS4QB++ audio protocol for DOS games running in the V86 in-browser PC emulator.
 
