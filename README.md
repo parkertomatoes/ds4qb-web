@@ -12,9 +12,11 @@ ds4qb-web is a browser-based server for the DS4QB protocols, allowing these game
 ## Try it out
 
 A gallery of nearly 30 DS4QB games and apps: 
+
 [Link](https://parkertomatoes.github.io/ds4qb-web-demo)
 
 A sample project using Vite and TypeScript:
+
 [<img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub link" width="30"/>](https://github.com/parkertomatoes/ds4qb-web-example-vite) [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/parkertomatoes/ds4qb-web-example-vite)
 
 ## Features
