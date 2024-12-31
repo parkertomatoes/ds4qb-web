@@ -2,8 +2,10 @@ import { FileReference, createImage, appendAutoexec } from './image';
 import { FatFsDisk } from 'fatfs-wasm';
 import { DS4QBPP } from './ds4qbpp';
 import { DS4QB2 } from './ds4qb2';
-import type { DS4QBDriver, DS4QBProtocol } from './ds4qb';
+import type { DS4QB1Driver, DS4QBDriver, DS4QBProtocol } from './ds4qb';
 import { FatPathMapper } from './lfnSupport';
+import { DS4QB } from './ds4qb1';
+import { ClipboardEmulator } from './clipboard';
 
 type V86FileSource = { url: string } | { buffer: ArrayBuffer }
 
@@ -22,7 +24,10 @@ export type DS4QBOptions = {
     protocol: 'ds4qb2',
     ds4qbDatPath?: string,
 } | {
-    protocol: 'ds4qb++'
+    protocol: 'ds4qb++',
+    configPath?: string
+} | {
+    protocol: 'ds4qb' | 'none'
 });
 
 function createDriver(emulator: any, disk: FatFsDisk, pathMap: FatPathMapper): DS4QBDriver {
@@ -37,12 +42,23 @@ function createDriver(emulator: any, disk: FatFsDisk, pathMap: FatPathMapper): D
     };
 }
 
+function createDS4QB1Driver(emulator: any, disk: FatFsDisk, pathMap: FatPathMapper): DS4QB1Driver {
+    const clipboard = new ClipboardEmulator(emulator, console);
+    return {
+        read: (path: string) => disk.session(() => disk.readFile(pathMap.toFatPath(path))),
+        poll: () => clipboard.read()?.bytes ?? null,
+        clear: () => { clipboard.empty() }
+    };
+}
+
 export async function attachDS4QB(V86: any, options: DS4QBOptions): Promise<Uint8Array> {
     const commands = [];
     if (options.addMouse)
         commands.push('A:\\MOUSE');
     if (options.addEms)
         commands.push('A:\\EMSMAGIC')
+    if (options.protocol === 'ds4qb')
+        commands.push('A:\\CLIPEMU')
     if (options.autoExe)
         commands.push(options.autoExe);
     const fdaImage = await appendAutoexec(options.fdaImageFile, commands)
@@ -56,7 +72,7 @@ export async function attachDS4QB(V86: any, options: DS4QBOptions): Promise<Uint
             cfgView.setUint16(2, 1, true); // Sound = ACTIVE
             cfgView.setUint16(4, 1, true); // Music = ACTIVE
             cfgView.setUint32(6, 44050, true); // Quality = 44050 Hz
-            disk.writeFile('SOUNDSYS.CFG', cfgData);
+            disk.writeFile(options.configPath ?? 'SOUNDSYS.CFG', cfgData);
         });
     }
 
@@ -72,19 +88,34 @@ export async function attachDS4QB(V86: any, options: DS4QBOptions): Promise<Uint
     });
     emulator.add_listener("emulator-ready", async function()
     {
-        const driver = createDriver(emulator, disk, pathMap);
         let ds4qb: DS4QBProtocol;
         switch(options.protocol) {
-            case 'ds4qb2':
+            case 'ds4qb': 
+                const driver = createDS4QB1Driver(emulator, disk, pathMap);
+                ds4qb = new DS4QB(driver, console);
+                break;
+
+            case 'ds4qb2': {
+                const driver = createDriver(emulator, disk, pathMap);
                 ds4qb = new DS4QB2(driver, options?.ds4qbDatPath ?? '', options?.workingDir ?? '');
                 break;
-            case 'ds4qb++':
+            }
+            case 'ds4qb++': {
+                const driver = createDriver(emulator, disk, pathMap);
                 ds4qb = new DS4QBPP(driver, options?.workingDir);
                 break;
+            }
+            case 'none': 
+                console.log('No protocol');
+                break;
             default:
-                throw new Error('unrecognized protocol');
+                ds4qb = { start: () => {}, stop: () => {} };
+                console.error('Unrecognized protocol: ');
         }
-        setTimeout(() => ds4qb.start(), 250);
+        setTimeout(() => {
+            console.debug('Starting DS4QB service');
+            ds4qb.start();
+        }, 250);
     });
     return image;
 }
